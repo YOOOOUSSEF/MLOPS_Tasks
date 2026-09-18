@@ -52,7 +52,7 @@ task_3/
 
 ## Requirements
 
-- Python 3.11
+- Python 3.14
 - PostgreSQL database with Olist tables created from Task 1
 - Trained model artifact
 - Fitted imputer artifact
