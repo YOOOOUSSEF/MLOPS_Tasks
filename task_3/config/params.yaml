@@ -1,0 +1,32 @@
+early_stopping_rounds: 20
+random_state: 42
+cv: 3
+n_jobs: -1
+n_estimators: [300,500,700]
+max_depth: [3, 5]
+learning_rate: [0.01, 0.1, 0.2]
+reg_alpha: [0.1, 1, 5]
+reg_lambda: [1, 5, 10]
+min_child_weight: [5, 10,20]
+gamma: [0.1, 0.5, 1]
+paths:
+  ml_test_features : ../data/processed/ml_test_features.csv
+  ml_val_features : ../data/processed/ml_val_features.csv
+  ml_train_features : ../data/processed/ml_train_features.csv
+  artifacts_distance: ../data/artifacts/distance_KM_effect.png
+  artifacts_state: ../data/artifacts/same_state_effect.png
+  artifacts_dist: ../data/artifacts/orders_distribution.png
+  ml_train: ../data/raw/ml_train.csv
+  ml_val: ../data/raw/ml_val.csv
+  ml_test: ../data/raw/ml_test.csv
+  ml_table_labeled: ../data/raw/ML_TABLE_LABELED.csv
+  ml_table: ../data/raw/ML_TABLE.csv
+  model: ../models/trained_model.pkl
+  imputer: ../models/transformers/imputer.pkl
+  feature_list: ../notebooks/feature_list.txt
+  train_data: ../data/raw/ml_train.csv
+  processed_data: ../data/processed/ml_train_features.csv
+  feature_list: ../feature_list.txt
+  result_summary: ../results_summary.txt
+  notebook_predictions: ../unit_tests/data/notebook_predictions.csv
+connection_string: postgresql://postgres:pass123@localhost:5432/olist-db
