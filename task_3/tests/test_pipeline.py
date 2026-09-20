@@ -1,35 +1,26 @@
 from pathlib import Path
-
+import os
+import pytest
 import yaml
 
 from src.config import get_project_root
 from src.pipeline import InferencePipeline
 
+def test_invalid_order_id():
+    sample_order_id = ["test-order-001"]
 
-def test_pipeline_loads_and_predicts():
-    project_root = get_project_root()
-    config = yaml.safe_load(open(project_root / "config" / "params.yaml", encoding="utf-8"))
+    with pytest.raises(ValueError, match="NO ORDER"):
+        project_root = get_project_root()
+        config = yaml.safe_load(open(project_root / "config" / "params.yaml"))
 
-    pipeline = InferencePipeline(
-        model_path=Path(config["paths"]["model"]),
-        imputer_path=Path(config["paths"]["imputer"]),
-        feature_list_path=Path(config["paths"]["feature_list"]),
-    )
+        #os.chdir("tests")# you are now on d:/MlOps_tasks/task_3/tests so paths can work.
 
-    sample_order = {
-        "order_id": "test-order-001",
-        "customer_id": "test-customer-001",
-        "order_status": "delivered",
-        "order_purchase": "2024-01-15",
-        "order_approved": "2024-01-15",
-        "order_delivered_carrier": "2024-01-20",
-        "order_delivered_customer": "2024-01-25",
-        "order_estimated_delivery": "2024-01-30",
-    }
+        pipeline = InferencePipeline(
+            model_path=config["paths"]["mlflow_model_uri"],
+            imputer_path=Path(config["paths"]["imputer"]),
+            feature_list_path=Path(config["paths"]["feature_list"]),
+        )
 
-    result = pipeline.predict(sample_order)
 
-    assert "prediction" in result
-    assert "probability" in result
-    assert isinstance(result["prediction"], int)
-    assert 0 <= result["probability"] <= 1
+
+        result = pipeline.predict(sample_order_id)

@@ -1,6 +1,5 @@
 from pathlib import Path
 import yaml
-import logging
 from src.logger import setup_logger
 
 logger = setup_logger(__name__)

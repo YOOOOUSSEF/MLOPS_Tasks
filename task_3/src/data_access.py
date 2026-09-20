@@ -3,6 +3,12 @@ import pandas as pd, yaml
 import joblib
 from sqlalchemy import create_engine
 from src.logger import setup_logger
+import mlflow
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+connection_string = os.getenv("DB_CONNECTION_STRING")
 
 logger = setup_logger(__name__)
 
@@ -11,7 +17,44 @@ def load_csv(path: Path) -> pd.DataFrame:
     logger.info("Loading CSV file: %s", path)
     return pd.read_csv(path)
 
+def load_model(uri: str):
+    logger.info("Loading MLflow model from URI: %s", uri)
+    try:
+        PROJ = Path(__file__).parent.parent
+        print(f"Project root: {PROJ}")
+        TRACKING_URI = f"sqlite:///{PROJ}/mlflow_tracker/mlflow.db"
+        mlflow.set_tracking_uri(TRACKING_URI)
 
+        # If this is a registry alias URI (models:/<name>@<alias>), resolve the
+        # actual artifact directory from the DB to avoid following stale Windows
+        # absolute paths that were baked in when the model was logged on the host.
+        if uri.startswith("models:/") and "@" in uri:
+            try:
+                client = mlflow.MlflowClient()
+                # Parse "models:/olist-classifier@champion"
+                rest = uri[len("models:/"):]          # "olist-classifier@champion"
+                model_name, alias = rest.rsplit("@", 1)
+                mv = client.get_model_version_by_alias(model_name, alias)
+                # mv.source is like "models:/m-<uuid>" — strip the literal prefix
+                # NOTE: lstrip() strips individual chars, NOT a prefix string.
+                # Use removeprefix() to safely strip "models:/" as a literal sequence.
+                model_id = mv.source.removeprefix("models:/").strip("/")
+                local_artifact_dir = PROJ / "mlflow_tracker" / "mlartifacts" / "models" / model_id / "artifacts"
+                logger.info(
+                    "Resolved alias '%s' → version %s → local path: %s",
+                    alias, mv.version, local_artifact_dir,
+                )
+                return mlflow.pyfunc.load_model(str(local_artifact_dir))
+            except Exception as resolve_err:
+                logger.warning(
+                    "Could not resolve alias locally (%s); falling back to direct URI load.", resolve_err
+                )
+
+        return mlflow.pyfunc.load_model(uri)
+    except Exception:
+        logger.exception("Failed to load MLflow model from URI: %s", uri)
+        raise
+    
 def load_pickle(path: Path):
     logger.info("Loading pickle artifact: %s", path)
     try:
@@ -143,10 +186,13 @@ def create_ML_TABLE(connection_string: str)-> pd.DataFrame:
     #final_table.to_csv(p['paths']['ml_table'], index=False)
     return final_table
 
-def create_order_features(order: dict) -> pd.DataFrame:
-    logger.info("Building order features for order_id=%s", order.get("order_id"))
+def create_order_features(order_ids: list[str]) -> pd.DataFrame:
+    order_ids=list(dict.fromkeys(order_ids))
+    ids_str = ", ".join(f"'{oid}'" for oid in order_ids)
+    logger.info("Building order features for order_id=%s",  ", ".join(order_ids))
     try:
-        connection_string=yaml.safe_load(open('../config/params.yaml'))['connection_string']
+        load_dotenv()
+        connection_string = os.getenv("DB_CONNECTION_STRING")
         engine = create_engine(connection_string)
         tables={
         'customers':'customers',
@@ -160,7 +206,14 @@ def create_order_features(order: dict) -> pd.DataFrame:
         }
         query=f"""select * from {tables['customers']}"""
         customers=pd.read_sql(query,engine)
-        orders=pd.DataFrame([order])
+        query=f"""select * from {tables['orders']} WHERE order_id IN ({ids_str})"""
+        orders=pd.read_sql(query,engine)
+        if len(orders) != len(order_ids):
+            found_ids = set(orders['order_id'])
+            missing_ids = set(order_ids) - found_ids
+            raise ValueError(f"NO ORDER with order_id(s): {missing_ids}")
+        orders = orders.set_index('order_id').loc[order_ids].reset_index()# to restore order.
+        
         query=f"""SELECT * FROM {tables['order_items']}"""
         order_items=pd.read_sql(query,engine)
         query=f"""SELECT * FROM {tables['order_payments']}"""
@@ -249,8 +302,8 @@ def create_order_features(order: dict) -> pd.DataFrame:
         final_row = final_row.merge(customers_and_zipcodes, on='customer_id', how='left')
         final_row = final_row.drop(columns=['city', 'geostate'])
 
-        logger.info("Order feature creation completed for order_id=%s", order.get("order_id"))
+        logger.info("Order feature creation completed for order_id=%s", ", ".join(order_ids))
         return final_row
     except Exception:
-        logger.exception("Failed to build order features for order_id=%s", order.get("order_id"))
+        logger.exception("Failed to build order features for order_id=%s", ", ".join(order_ids))
         raise

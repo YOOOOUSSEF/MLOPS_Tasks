@@ -33,6 +33,7 @@ def apply_imputer(data: pd.DataFrame, imputer) -> pd.DataFrame:
 def align_features(
     data: pd.DataFrame,
     feature_names: list[str],
+    model=None
 ) -> pd.DataFrame:
     logger.info("Aligning features to match model's expected input")
     try:
@@ -42,7 +43,18 @@ def align_features(
             if feature_name not in result.columns:
                 result[feature_name] = 0
 
-        return result[feature_names]
+        result = result[feature_names]
+        if model is not None:
+            schema = model.metadata.get_input_schema()
+            for col_spec in schema.inputs:
+                name = col_spec.name
+                dtype = col_spec.type.to_pandas()
+                if name in result.columns:
+                    if str(dtype).startswith("int") or str(dtype) == "int64":
+                        result[name] = result[name].fillna(0)  # NaN one-hot/int columns → 0
+                    result[name] = result[name].astype(dtype)
+        print(f"result: {result}")
+        return result
     except Exception:
         logger.exception("Failed to align features to match model's expected input")
         raise

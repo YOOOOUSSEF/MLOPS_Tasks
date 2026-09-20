@@ -1,0 +1,126 @@
+artifact_path: file:///D:\MlOps_tasks\task_3/mlflow_tracker/mlartifacts/models/m-b988b9aeae1c4c8e983006fa59e079e4/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.14.7
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.0
+    skops_trusted_types:
+    - xgboost.core.Booster
+    - xgboost.sklearn.XGBClassifier
+is_signature_from_type_hint: false
+mlflow_version: 3.16.1
+model_id: m-b988b9aeae1c4c8e983006fa59e079e4
+model_size_bytes: 95040
+model_uuid: m-b988b9aeae1c4c8e983006fa59e079e4
+prompts: null
+run_id: c41735a4e63842958584325482afb730
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "num_sellers", "required": true}, {"type":
+    "double", "name": "num_items", "required": true}, {"type": "double", "name": "total_price",
+    "required": true}, {"type": "double", "name": "total_freight_value", "required":
+    true}, {"type": "double", "name": "avg_seller_lat", "required": true}, {"type":
+    "double", "name": "avg_seller_lng", "required": true}, {"type": "double", "name":
+    "max_product_weight_grams", "required": true}, {"type": "double", "name": "max_product_length_cm",
+    "required": true}, {"type": "double", "name": "max_product_height_cm", "required":
+    true}, {"type": "double", "name": "max_product_width_cm", "required": true}, {"type":
+    "double", "name": "avg_product_name_length", "required": true}, {"type": "double",
+    "name": "avg_product_description_length", "required": true}, {"type": "double",
+    "name": "avg_product_photos_qty", "required": true}, {"type": "long", "name":
+    "sel_state_AC", "required": true}, {"type": "long", "name": "sel_state_AM", "required":
+    true}, {"type": "long", "name": "sel_state_BA", "required": true}, {"type": "long",
+    "name": "sel_state_CE", "required": true}, {"type": "long", "name": "sel_state_DF",
+    "required": true}, {"type": "long", "name": "sel_state_ES", "required": true},
+    {"type": "long", "name": "sel_state_GO", "required": true}, {"type": "long", "name":
+    "sel_state_MA", "required": true}, {"type": "long", "name": "sel_state_MG", "required":
+    true}, {"type": "long", "name": "sel_state_MS", "required": true}, {"type": "long",
+    "name": "sel_state_MT", "required": true}, {"type": "long", "name": "sel_state_PA",
+    "required": true}, {"type": "long", "name": "sel_state_PB", "required": true},
+    {"type": "long", "name": "sel_state_PE", "required": true}, {"type": "long", "name":
+    "sel_state_PI", "required": true}, {"type": "long", "name": "sel_state_PR", "required":
+    true}, {"type": "long", "name": "sel_state_RJ", "required": true}, {"type": "long",
+    "name": "sel_state_RN", "required": true}, {"type": "long", "name": "sel_state_RO",
+    "required": true}, {"type": "long", "name": "sel_state_RS", "required": true},
+    {"type": "long", "name": "sel_state_SC", "required": true}, {"type": "long", "name":
+    "sel_state_SE", "required": true}, {"type": "long", "name": "sel_state_SP", "required":
+    true}, {"type": "long", "name": "cat_automotivo", "required": true}, {"type":
+    "long", "name": "cat_bebes", "required": true}, {"type": "long", "name": "cat_beleza_saude",
+    "required": true}, {"type": "long", "name": "cat_brinquedos", "required": true},
+    {"type": "long", "name": "cat_cama_mesa_banho", "required": true}, {"type": "long",
+    "name": "cat_consoles_games", "required": true}, {"type": "long", "name": "cat_cool_stuff",
+    "required": true}, {"type": "long", "name": "cat_eletronicos", "required": true},
+    {"type": "long", "name": "cat_esporte_lazer", "required": true}, {"type": "long",
+    "name": "cat_fashion_bolsas_e_acessorios", "required": true}, {"type": "long",
+    "name": "cat_ferramentas_jardim", "required": true}, {"type": "long", "name":
+    "cat_informatica_acessorios", "required": true}, {"type": "long", "name": "cat_moveis_decoracao",
+    "required": true}, {"type": "long", "name": "cat_moveis_escritorio", "required":
+    true}, {"type": "long", "name": "cat_other", "required": true}, {"type": "long",
+    "name": "cat_papelaria", "required": true}, {"type": "long", "name": "cat_perfumaria",
+    "required": true}, {"type": "long", "name": "cat_pet_shop", "required": true},
+    {"type": "long", "name": "cat_relogios_presentes", "required": true}, {"type":
+    "long", "name": "cat_telefonia", "required": true}, {"type": "long", "name": "cat_utilidades_domesticas",
+    "required": true}, {"type": "double", "name": "num_payments", "required": true},
+    {"type": "double", "name": "num_installments", "required": true}, {"type": "double",
+    "name": "total_payment_value", "required": true}, {"type": "long", "name": "pay_boleto",
+    "required": true}, {"type": "long", "name": "pay_credit_card", "required": true},
+    {"type": "long", "name": "pay_debit_card", "required": true}, {"type": "long",
+    "name": "pay_not_defined", "required": true}, {"type": "long", "name": "pay_voucher",
+    "required": true}, {"type": "double", "name": "customer_lat", "required": true},
+    {"type": "double", "name": "customer_lng", "required": true}, {"type": "long",
+    "name": "cust_state_AC", "required": true}, {"type": "long", "name": "cust_state_AL",
+    "required": true}, {"type": "long", "name": "cust_state_AM", "required": true},
+    {"type": "long", "name": "cust_state_AP", "required": true}, {"type": "long",
+    "name": "cust_state_BA", "required": true}, {"type": "long", "name": "cust_state_CE",
+    "required": true}, {"type": "long", "name": "cust_state_DF", "required": true},
+    {"type": "long", "name": "cust_state_ES", "required": true}, {"type": "long",
+    "name": "cust_state_GO", "required": true}, {"type": "long", "name": "cust_state_MA",
+    "required": true}, {"type": "long", "name": "cust_state_MG", "required": true},
+    {"type": "long", "name": "cust_state_MS", "required": true}, {"type": "long",
+    "name": "cust_state_MT", "required": true}, {"type": "long", "name": "cust_state_PA",
+    "required": true}, {"type": "long", "name": "cust_state_PB", "required": true},
+    {"type": "long", "name": "cust_state_PE", "required": true}, {"type": "long",
+    "name": "cust_state_PI", "required": true}, {"type": "long", "name": "cust_state_PR",
+    "required": true}, {"type": "long", "name": "cust_state_RJ", "required": true},
+    {"type": "long", "name": "cust_state_RN", "required": true}, {"type": "long",
+    "name": "cust_state_RO", "required": true}, {"type": "long", "name": "cust_state_RR",
+    "required": true}, {"type": "long", "name": "cust_state_RS", "required": true},
+    {"type": "long", "name": "cust_state_SC", "required": true}, {"type": "long",
+    "name": "cust_state_SE", "required": true}, {"type": "long", "name": "cust_state_SP",
+    "required": true}, {"type": "long", "name": "cust_state_TO", "required": true},
+    {"type": "long", "name": "purchase_month", "required": true}, {"type": "long",
+    "name": "estimated_days", "required": true}, {"type": "double", "name": "distance_km",
+    "required": true}, {"type": "long", "name": "avg_seller_lat_missing", "required":
+    true}, {"type": "long", "name": "avg_seller_lng_missing", "required": true}, {"type":
+    "long", "name": "distance_km_missing", "required": true}, {"type": "long", "name":
+    "max_product_weight_grams_missing", "required": true}, {"type": "long", "name":
+    "max_product_length_cm_missing", "required": true}, {"type": "long", "name": "max_product_height_cm_missing",
+    "required": true}, {"type": "long", "name": "max_product_width_cm_missing", "required":
+    true}, {"type": "long", "name": "avg_product_name_length_missing", "required":
+    true}, {"type": "long", "name": "avg_product_description_length_missing", "required":
+    true}, {"type": "long", "name": "avg_product_photos_qty_missing", "required":
+    true}, {"type": "long", "name": "num_payments_missing", "required": true}, {"type":
+    "long", "name": "num_installments_missing", "required": true}, {"type": "long",
+    "name": "total_payment_value_missing", "required": true}, {"type": "long", "name":
+    "pay_boleto_missing", "required": true}, {"type": "long", "name": "pay_credit_card_missing",
+    "required": true}, {"type": "long", "name": "pay_debit_card_missing", "required":
+    true}, {"type": "long", "name": "pay_not_defined_missing", "required": true},
+    {"type": "long", "name": "pay_voucher_missing", "required": true}, {"type": "long",
+    "name": "customer_lat_missing", "required": true}, {"type": "long", "name": "customer_lng_missing",
+    "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-09-20 18:33:05.624036'
