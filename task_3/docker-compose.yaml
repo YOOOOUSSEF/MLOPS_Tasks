@@ -1,0 +1,26 @@
+services:
+  postgres-db:
+    image: postgres:18
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: olist-db
+      PGDATA: /var/lib/postgresql/data/18/docker
+    ports:
+      - "5432:5432"
+    volumes:
+      - 39bcfe2289dda25bd825f0e990adb0a22da574168cb370ea84f63303fffad0d0:/var/lib/postgresql/data
+
+  olist-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DB_CONNECTION_STRING: postgresql://postgres:${POSTGRES_PASSWORD}@postgres-db:5432/olist-db
+    depends_on:
+      - postgres-db
+    volumes:
+      - ./mlflow_tracker:/app/mlflow_tracker
+
+volumes:
+  39bcfe2289dda25bd825f0e990adb0a22da574168cb370ea84f63303fffad0d0:
+    external: true
