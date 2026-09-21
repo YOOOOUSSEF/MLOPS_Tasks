@@ -10,7 +10,7 @@ def setup_logger(name: str = "mlops_app") -> logging.Logger:
         return logger
 
     formatter = logging.Formatter(
-        "%(asctime)s - %(levelname)s - %(message)s"
+        "%(asctime)s- %(filename)s - %(levelname)s - %(message)s"
     )
 
     stream_handler = logging.StreamHandler()
