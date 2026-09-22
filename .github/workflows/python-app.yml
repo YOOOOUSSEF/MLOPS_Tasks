@@ -56,12 +56,13 @@ jobs:
 
 
     - name: Run integration tests
+      working-directory: ./task_3
       env:
         DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
       run: |
-        pytest ./task_3/tests/integration_test_notebook_parity.py
-        pytest ./task_3/tests/integration_test_API_endpoints.py
-        pytest ./task_3/tests/integration_test_pipeline
+        pytest ./tests/integration_test_notebook_parity.py
+        pytest ./tests/integration_test_API_endpoints.py
+        pytest ./tests/integration_test_pipeline
         docker rm -f test-container
 
     - name: Tear down services
