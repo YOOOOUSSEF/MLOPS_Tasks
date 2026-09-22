@@ -20,15 +20,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
+    - name: Set up Python 3.14
       uses: actions/setup-python@v5
       with:
-        python-version: "3.10"
+        python-version: "3.14"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install flake8 black pytest
-        if [ -f task_3/requirements/development.txt ]; then pip install -r task_3/requirements/development.txt; fi
+        if [ -f task_3/requirements/runtime.txt ]; then pip install -r task_3/requirements/runtime.txt; fi
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -41,38 +41,44 @@ jobs:
         black . --check --diff --color
     - name: unit tests
       run: |
-        pytest ./task_3/tests/test_features.py
-        pytest ./task_3/tests/test_pipeline.py
-        pytest ./task_3/tests/test_preprocessing.py
-        
+        pytest ./task_3/unit_tests
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-    
-    - name: Build image (no push)
-      uses: docker/build-push-action@v6
-      with:
-        context: ./task_3
-        push: false
-        tags: youssef375/olistAI-is_late_app:latest
-        load: true          # loads image into local Docker so you can test it
-    
+
+    - name: Start services (download db then run db and ) with docker-compose (CI)
+      working-directory: ./task_3
+      env:
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml up -d --build
+
+
+
     - name: Run integration tests
+      working-directory: ./task_3
+      env:
+        DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
       run: |
-        docker run -d -p 8000:8000 --name test-container youssef375/olistAI-is_late_app:latest
-        sleep 5
-        pytest ./task_3/tests/integration_test_notebook_parity.py
-        pytest ./task_3/tests/integration_test_API_endpoints.py
+        pytest ./integration_tests
         docker rm -f test-container
-    
+
+    - name: Tear down services
+      if: always()
+      working-directory: ./task_3
+      run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml down -v
+
+
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    
-    - name: Push image
+
+    - name: Build and Push image to my private docker repo
       uses: docker/build-push-action@v6
       with:
         context: ./task_3
         push: true
-        tags: youssef375/olistAI-is_late_app:latest
+        tags: youssef375/olistai-is_late_app:latest
+
