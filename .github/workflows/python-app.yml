@@ -41,8 +41,7 @@ jobs:
         black . --check --diff --color
     - name: unit tests
       run: |
-        pytest ./task_3/tests/test_features.py
-        pytest ./task_3/tests/test_preprocessing.py
+        pytest ./task_3/tests/unit_tests
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -60,9 +59,7 @@ jobs:
       env:
         DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
       run: |
-        pytest ./tests/test_integration_notebook_parity.py
-        pytest ./tests/test_integration_API_endpoints.py
-        pytest ./tests/test_integration_pipeline
+        pytest ./tests/integration_tests
         docker rm -f test-container
 
     - name: Tear down services
