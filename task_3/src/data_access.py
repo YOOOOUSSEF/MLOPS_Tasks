@@ -70,7 +70,9 @@ def load_model(uri: str):
 def load_pickle(path: Path):
     logger.info("Loading pickle artifact: %s", path)
     try:
-        return joblib.load(path)
+        PROJ = Path(__file__).parent.parent
+        imputer_path = PROJ / path
+        return joblib.load(imputer_path)
     except Exception:
         logger.exception("Failed to load pickle artifact: %s", path)
         raise
@@ -79,6 +81,8 @@ def load_pickle(path: Path):
 def load_feature_list(path: Path) -> list[str]:
     logger.info("Loading feature list: %s", path)
     try:
+        PROJ = Path(__file__).parent.parent
+        path = PROJ / path
         features = [
             line.strip()
             for line in path.read_text(encoding="utf-8").splitlines()
