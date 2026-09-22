@@ -52,12 +52,12 @@ jobs:
       with:
         context: ./task_3
         push: false
-        tags: youssef375/olistAI-is_late_app:latest
+        tags: youssef375/olistai-is_late_app:latest
         load: true          # loads image into local Docker so you can test it
 
     - name: Run integration tests
       run: |
-        docker run -d -p 8000:8000 --name test-container youssef375/olistAI-is_late_app:latest
+        docker run -d -p 8000:8000 --name test-container youssef375/olistai-is_late_app:latest
         sleep 5
         pytest ./task_3/tests/integration_test_notebook_parity.py
         pytest ./task_3/tests/integration_test_API_endpoints.py
@@ -75,4 +75,4 @@ jobs:
       with:
         context: ./task_3
         push: true
-        tags: youssef375/olistAI-is_late_app:latest
+        tags: youssef375/olistai-is_late_app:latest
