@@ -4,11 +4,18 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: olist-db
+      POSTGRES_NAME: postgres
       PGDATA: /var/lib/postgresql/data/18/docker
     ports:
       - "5432:5432"
     volumes:
-      - 39bcfe2289dda25bd825f0e990adb0a22da574168cb370ea84f63303fffad0d0:/var/lib/postgresql/data
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d olist-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   olist-api:
     build: .
@@ -16,11 +23,15 @@ services:
       - "8000:8000"
     environment:
       DB_CONNECTION_STRING: postgresql://postgres:${POSTGRES_PASSWORD}@postgres-db:5432/olist-db
+      MLFLOW_TRACKING_URI: sqlite:////app/mlflow_tracker/mlflow.db
+      MLFLOW_ALLOW_FILE_STORE: "true"
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
     volumes:
       - ./mlflow_tracker:/app/mlflow_tracker
 
 volumes:
-  39bcfe2289dda25bd825f0e990adb0a22da574168cb370ea84f63303fffad0d0:
+  pg-data:
     external: true
+    name: 39bcfe2289dda25bd825f0e990adb0a22da574168cb370ea84f63303fffad0d0

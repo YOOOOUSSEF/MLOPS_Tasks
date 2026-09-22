@@ -47,22 +47,27 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build image (no push)
-      uses: docker/build-push-action@v6
-      with:
-        context: ./task_3
-        push: false
-        tags: youssef375/olistai-is_late_app:latest
-        load: true          # loads image into local Docker so you can test it
+    - name: Start services (download db then run db and ) with docker-compose (CI)
+      env:
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml up -d --build
+
 
     - name: Run integration tests
+      env:
+        DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@postgres-db:5432/olist-db
       run: |
-        docker run -d -p 8000:8000 --name test-container youssef375/olistai-is_late_app:latest
-        sleep 5
+        sleep 10
         pytest ./task_3/tests/integration_test_notebook_parity.py
         pytest ./task_3/tests/integration_test_API_endpoints.py
         pytest ./task_3/tests/integration_test_pipeline
         docker rm -f test-container
+
+    - name: Tear down services
+      if: always()
+      run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml down -v
+
+
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
@@ -70,9 +75,10 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Push image
+    - name: Build and Push image to my private docker repo
       uses: docker/build-push-action@v6
       with:
         context: ./task_3
         push: true
         tags: youssef375/olistai-is_late_app:latest
+
