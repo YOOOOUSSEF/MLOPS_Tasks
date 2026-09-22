@@ -6,6 +6,7 @@ These hit the real app (real model, real DB) via FastAPI's TestClient,
 so they require the DB and MLflow artifacts to be reachable, same as
 running the app normally.
 """
+
 from starlette.testclient import TestClient as TestClient
 from app.main import app
 

@@ -4,6 +4,7 @@ from src.logger import setup_logger
 
 logger = setup_logger(__name__)
 
+
 def add_date_features(data: pd.DataFrame) -> pd.DataFrame:
     logger.info("Adding date features")
     try:
@@ -18,13 +19,14 @@ def add_date_features(data: pd.DataFrame) -> pd.DataFrame:
             result["order_estimated_delivery"] - result["order_purchase"]
         ).dt.days
 
-        drop_cols = ['order_purchase', 'order_estimated_delivery']
+        drop_cols = ["order_purchase", "order_estimated_delivery"]
         result = result.drop(columns=drop_cols)
 
         return result
     except Exception:
         logger.exception("Failed to add date features for")
         raise
+
 
 def haversine(
     latitude_1,
@@ -46,9 +48,7 @@ def haversine(
 
         value = (
             np.sin(delta_latitude / 2) ** 2
-            + np.cos(latitude_1)
-            * np.cos(latitude_2)
-            * np.sin(delta_longitude / 2) ** 2
+            + np.cos(latitude_1) * np.cos(latitude_2) * np.sin(delta_longitude / 2) ** 2
         )
 
         return 2 * earth_radius_km * np.arcsin(np.sqrt(value))

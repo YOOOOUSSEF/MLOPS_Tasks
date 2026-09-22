@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.preprocessing import  align_features, missing_value_indicators
+from src.preprocessing import align_features, missing_value_indicators
 
 
 def test_missing_value_indicators_adds_missing_columns():

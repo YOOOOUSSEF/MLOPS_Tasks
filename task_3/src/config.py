@@ -4,6 +4,7 @@ from src.logger import setup_logger
 
 logger = setup_logger(__name__)
 
+
 def load_config(config_path: Path) -> dict:
     logger.info("Loading config from: %s", config_path)
     try:
@@ -17,6 +18,7 @@ def load_config(config_path: Path) -> dict:
     except Exception as exc:
         logger.exception("Failed to load config: %s", exc)
         raise
+
 
 def get_project_root() -> Path:
     project_root = Path(__file__).resolve().parents[1]
