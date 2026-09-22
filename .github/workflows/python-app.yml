@@ -48,16 +48,17 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Start services (download db then run db and ) with docker-compose (CI)
+      working-directory: ./task_3
       env:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml up -d --build
 
 
+
     - name: Run integration tests
       env:
-        DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@postgres-db:5432/olist-db
+        DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
       run: |
-        sleep 10
         pytest ./task_3/tests/integration_test_notebook_parity.py
         pytest ./task_3/tests/integration_test_API_endpoints.py
         pytest ./task_3/tests/integration_test_pipeline
@@ -65,6 +66,7 @@ jobs:
 
     - name: Tear down services
       if: always()
+      working-directory: ./task_3
       run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml down -v
 
 
