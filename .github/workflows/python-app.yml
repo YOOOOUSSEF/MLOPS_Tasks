@@ -60,9 +60,9 @@ jobs:
       env:
         DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
       run: |
-        pytest ./tests/integration_test_notebook_parity.py
-        pytest ./tests/integration_test_API_endpoints.py
-        pytest ./tests/integration_test_pipeline
+        pytest ./tests/test_integration_notebook_parity.py
+        pytest ./tests/test_integration_API_endpoints.py
+        pytest ./tests/test_integration_pipeline
         docker rm -f test-container
 
     - name: Tear down services
