@@ -39,9 +39,10 @@ jobs:
       run: |
         # Checks if all files in the current directory are Black-formatted
         black . --check --diff --color
+
     - name: unit tests
-      run: |
-        pytest ./task_3/unit_tests
+      working-directory: ./task_3
+      run: pytest ./unit_tests
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -58,11 +59,9 @@ jobs:
       working-directory: ./task_3
       env:
         DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
-      run: |
-        pytest ./integration_tests
-        docker rm -f test-container
+      run: pytest ./integration_tests
 
-    - name: Tear down services
+    - name: Tear down services (clean server always even if there are failures)
       if: always()
       working-directory: ./task_3
       run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml down -v

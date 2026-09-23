@@ -4,7 +4,6 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: olist-db
-      POSTGRES_NAME: postgres
       PGDATA: /var/lib/postgresql/data/18/docker
     ports:
       - "5432:5432"
@@ -22,9 +21,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DB_CONNECTION_STRING: postgresql://postgres:${POSTGRES_PASSWORD}@postgres-db:5432/olist-db
-      MLFLOW_TRACKING_URI: sqlite:////app/mlflow_tracker/mlflow.db
-      MLFLOW_ALLOW_FILE_STORE: "true"
+      DB_CONNECTION_STRING: postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5432/olist-db
     depends_on:
       postgres-db:
         condition: service_healthy

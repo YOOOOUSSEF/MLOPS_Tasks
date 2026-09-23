@@ -8,7 +8,8 @@ services:
       # declaring healthy and letting the API start.
       start_period: 120s
 
-# In CI mode, override the production external volume with a fresh local one.
+# in CI mode, override the external volume with a fresh local one.
+# so server can start from scratch on postgresql db.
 # Docker Compose merges volume configs, so we must explicitly clear external/name.
 volumes:
   pg-data: !override
