@@ -5,3 +5,4 @@ app.log
 .ruff_cache
 .venv
 *.html
+*.pdf
