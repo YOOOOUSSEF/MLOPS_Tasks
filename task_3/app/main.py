@@ -120,12 +120,12 @@ def get_current_predictions(engine) -> pd.DataFrame:
 
 def get_reference_predictions() -> pd.DataFrame:
     """Load the reference (training-time) prediction distribution."""
-    if not os.path.exists(p["paths"]["ml_table_labeled"]):
+    if not os.path.exists(p["paths"]["ref_data"]):
         raise FileNotFoundError(
-            f"Reference data not found at {p['paths']['ml_table_labeled']}. "
+            f"Reference data not found at {p['paths']['ref_data']}. "
             "Export your training/validation predictions once and save them there."
         )
-    df = pd.read_csv(p["paths"]["ml_table_labeled"], usecols=["is_late"]).rename(
+    df = pd.read_csv(p["paths"]["ref_data"], usecols=["is_late"]).rename(
         columns={"is_late": "prediction"}
     )
     logger.info("Loaded %d reference predictions", len(df))

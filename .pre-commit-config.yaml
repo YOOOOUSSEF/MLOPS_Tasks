@@ -5,7 +5,7 @@ repos:
       - id: check-yaml
         exclude: ^task_3/docker-compose\.ci\.yaml$
       - id: check-added-large-files
-        exclude: ^task_3/db/seed\.sql$
+        exclude: ^(task_3/db/seed\.sql|task_3/ref_data/ML_TABLE_LABELED\.csv)$
 
   - repo: local
     hooks:
