@@ -1,10 +1,7 @@
 services:
   postgres-db:
-    volumes: !override
-      - pg-data:/var/lib/postgresql/data
-      - ./db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
     healthcheck:
-      # Seed.sql is large — give postgres enough time to finish loading before
+      # seed.sql is large - so give postgres enough time to finish loading before
       # declaring healthy and letting the API start.
       start_period: 120s
 
