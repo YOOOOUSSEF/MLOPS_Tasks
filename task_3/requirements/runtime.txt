@@ -10,3 +10,5 @@ fastapi==0.141.1
 uvicorn==0.53.0
 mlflow==3.16.0
 httpx2==2.13.0
+prometheus-client==0.26.0
+evidently==0.7.23

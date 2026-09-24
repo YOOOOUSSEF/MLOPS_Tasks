@@ -7,9 +7,6 @@ import mlflow
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-connection_string = os.getenv("DB_CONNECTION_STRING")
-
 logger = setup_logger(__name__)
 
 

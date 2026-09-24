@@ -79,5 +79,5 @@ jobs:
       with:
         context: ./task_3
         push: true
-        tags: youssef375/olistai-is_late_app:latest
+        tags: youssef375/olistai-is_late_app:latest #if this is an actual image, then I will put another variable tag beside latest to preserve all images.
 

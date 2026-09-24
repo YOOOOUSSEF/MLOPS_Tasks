@@ -2,16 +2,23 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      - id: trailing-whitespace
       - id: check-yaml
         exclude: ^task_3/docker-compose\.ci\.yaml$
       - id: check-added-large-files
-        exclude: ^task_3/db/seed\.sql$
+        exclude: ^(task_3/db/seed\.sql|task_3/ref_data/ML_TABLE_LABELED\.csv)$
 
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
+  - repo: local
     hooks:
+      - id: trailing-whitespace
+        name: trim trailing whitespace
+        entry: python tools/fix_trailing_whitespace.py
+        language: system
+        types: [text]
       - id: black
+        name: black
+        entry: python -m black
+        language: system
+        types: [python]
         args: [--safe]
 
   - repo: https://github.com/PyCQA/flake8

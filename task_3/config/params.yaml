@@ -31,3 +31,5 @@ paths:
   feature_list: feature_list.txt
   result_summary: results_summary.txt
   notebook_predictions: integration_tests/data/notebook_predictions.csv
+  report: reports/drift_report.html
+  ref_data: ref_data/ML_TABLE_LABELED.csv
