@@ -2,6 +2,24 @@
 
 This service loads the trained Olist late-delivery model and exposes predictions through FastAPI. Training is kept in the notebooks; the API performs inference and monitoring.
 
+## Project structure
+
+```text
+task_3/
+├── app/main.py                 # FastAPI application and monitoring endpoints
+├── src/                        # Inference, feature, data-access, and validation code
+├── config/params.yaml          # Model, data, and report paths
+├── data/                       # Raw, processed, and reference data
+├── models/                     # Model and preprocessing artifacts
+├── db/seed.sql                 # PostgreSQL schema and seed data
+├── notebooks/                  # Reproducible analysis notebooks
+├── unit_tests/                 # Unit tests
+├── integration_tests/          # API and pipeline integration tests
+├── Dockerfile                  # API image definition
+├── docker-compose.yaml         # Local API and PostgreSQL services
+└── reports/                    # Generated drift reports
+```
+
 ## Run with Docker
 
 From `task_3/`, set `POSTGRES_PASSWORD` in your environment, then run:
