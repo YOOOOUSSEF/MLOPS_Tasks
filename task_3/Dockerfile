@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements/runtime.txt
 COPY app/ app/
 COPY src/ src/
 COPY config/ config/
+COPY data/raw/ML_TABLE_LABELED.csv data/raw/ML_TABLE_LABELED.csv
 COPY models/ models/
 COPY feature_list.txt .
 

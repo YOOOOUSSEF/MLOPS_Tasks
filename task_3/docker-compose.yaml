@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d olist-db"]
       interval: 5s
@@ -21,12 +22,13 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DB_CONNECTION_STRING: postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5432/olist-db
+      DB_CONNECTION_STRING: postgresql://postgres:${POSTGRES_PASSWORD}@postgres-db:5432/olist-db
     depends_on:
       postgres-db:
         condition: service_healthy
     volumes:
       - ./mlflow_tracker:/app/mlflow_tracker
+      - ./reports:/app/reports
 
 volumes:
   pg-data:

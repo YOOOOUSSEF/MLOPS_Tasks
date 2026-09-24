@@ -1,11 +1,44 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 import mlflow
 from pathlib import Path
 import yaml
 from src.pipeline import InferencePipeline
+from prometheus_client import Counter, Histogram, generate_latest, CollectorRegistry
+from starlette.responses import Response
+import time
+from datetime import datetime, timedelta
+from evidently import Report
+from evidently.core.report import Snapshot
+from evidently.presets import DataDriftPreset
+import pandas as pd
+from sqlalchemy import create_engine, text
+import os
+from dotenv import load_dotenv
+from src.logger import setup_logger
+
+logger = setup_logger(__name__)
+
 
 app = FastAPI()
+
+LOOKBACK_DAYS = 7
+
+# Metrics
+metrics_registry = CollectorRegistry()
+REQUEST_COUNT = Counter(
+    "http_requests_total",
+    "Requests count",
+    registry=metrics_registry,
+)
+
+REQUEST_LATENCY = Histogram(
+    "http_request_duration_seconds",
+    "Latency",
+    registry=metrics_registry,
+)
+
+ERROR_COUNT = Counter("http_errors_total", "Errors", registry=metrics_registry)
 
 
 class order(BaseModel):
@@ -16,6 +49,10 @@ class PredictionResponse(BaseModel):
     prediction: int
     probability: float
     model_version: int
+
+
+class DriftReportResponse(BaseModel):
+    status: str
 
 
 # ONCE APP started download model
@@ -33,6 +70,115 @@ pipeline = InferencePipeline(
     imputer_path=Path(p["paths"]["imputer_fastapi"]),
     feature_list_path=Path(p["paths"]["feature_list_fastapi"]),
 )
+
+
+# Middleware (request count, latency, error rate)
+@app.middleware("http")
+async def prometheus_middleware(request: Request, call_next):
+    start_time = time.time()
+
+    try:
+        response = await call_next(request)
+
+        # Count every request
+        REQUEST_COUNT.inc()
+
+        # Record latency
+        latency = time.time() - start_time
+        REQUEST_LATENCY.observe(latency)
+
+        # Count 5xx errors
+        if response.status_code >= 500:
+            ERROR_COUNT.inc()
+
+        return response
+
+    except Exception:
+        # Request raised an exception
+        ERROR_COUNT.inc()
+
+        # Still record request + latency
+        REQUEST_COUNT.inc()
+        REQUEST_LATENCY.observe(time.time() - start_time)
+
+        raise
+
+
+def get_current_predictions(engine) -> pd.DataFrame:
+    """Pull recent predictions from prediction_logs."""
+    cutoff = datetime.now() - timedelta(days=LOOKBACK_DAYS)
+    query = text("""
+        SELECT order_id, prediction, timestamp
+        FROM prediction_logs
+        WHERE timestamp >= :cutoff
+        """)
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn, params={"cutoff": cutoff})
+        logger.info("Loaded %d reference predictions", len(df))
+    return df
+
+
+def get_reference_predictions() -> pd.DataFrame:
+    """Load the reference (training-time) prediction distribution."""
+    if not os.path.exists(p["paths"]["ml_table_labeled"]):
+        raise FileNotFoundError(
+            f"Reference data not found at {p['paths']['ml_table_labeled']}. "
+            "Export your training/validation predictions once and save them there."
+        )
+    df = pd.read_csv(p["paths"]["ml_table_labeled"], usecols=["is_late"]).rename(
+        columns={"is_late": "prediction"}
+    )
+    logger.info("Loaded %d reference predictions", len(df))
+    return df
+
+
+def run_drift_check(reference_df: pd.DataFrame, current_df: pd.DataFrame) -> Snapshot:
+    """Run Evidently's data drift preset on the prediction column."""
+    # Evidently expects matching column names in both dataframes.
+    # We only care about the 'prediction' column for prediction drift.
+    reference = reference_df[["prediction"]]
+    current = current_df[["prediction"]]
+
+    report = Report(metrics=[DataDriftPreset()])
+    return report.run(reference_data=reference, current_data=current)
+
+
+# Metrics endpoint
+@app.get("/metrics")
+def metrics():
+    return Response(
+        content=generate_latest(metrics_registry),
+        media_type="text/plain",
+    )
+
+
+@app.get(
+    "/prediction_drift",
+    response_model=DriftReportResponse,
+    tags=["Monitoring"],
+    summary="Generate the prediction drift report",
+)
+def make_report() -> DriftReportResponse:
+    load_dotenv()
+    connection_string = os.getenv("DB_CONNECTION_STRING")
+    engine = create_engine(connection_string)
+
+    current_df = get_current_predictions(engine)
+    if current_df.empty:
+        logger.warning(
+            "No predictions found in the last %d days — skipping drift check.",
+            LOOKBACK_DAYS,
+        )
+        return DriftReportResponse(status="skipped: no recent predictions")
+
+    reference_df = get_reference_predictions()
+
+    report = run_drift_check(reference_df, current_df)
+
+    os.makedirs(os.path.dirname(p["paths"]["report"]), exist_ok=True)
+    report.save_html(p["paths"]["report"])
+    logger.info("Drift report saved to %s", p["paths"]["report"])
+    return DriftReportResponse(status="saved")
 
 
 @app.get("/health")

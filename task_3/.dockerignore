@@ -3,5 +3,8 @@ tests/
 .git/
 .env
 data/
+!data/
+!data/raw/
+!data/raw/ML_TABLE_LABELED.csv
 __pycache__/
 *.pyc

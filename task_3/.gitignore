@@ -3,3 +3,5 @@ __pycache__/
 .env
 app.log
 .ruff_cache
+.venv
+*.html

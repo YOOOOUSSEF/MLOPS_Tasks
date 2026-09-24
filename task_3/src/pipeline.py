@@ -1,6 +1,9 @@
 from pathlib import Path
 import time
 import pandas as pd
+from sqlalchemy import create_engine, text
+import os
+from dotenv import load_dotenv
 
 from src.data_access import (
     load_feature_list,
@@ -38,6 +41,7 @@ class InferencePipeline:
         data = missing_value_indicators(data)
 
         data = apply_imputer(data, self.imputer)
+
         data = align_features(data, self.feature_names, self.model)
 
         validate_input(data)
@@ -60,6 +64,25 @@ class InferencePipeline:
             prediction = predict(self.model, features)
 
             latency = time.time() - start
+
+            load_dotenv()
+            connection_string = os.getenv("DB_CONNECTION_STRING")
+            engine = create_engine(connection_string)
+
+            for index, doc in enumerate(prediction):
+                query = text("""
+                    INSERT INTO prediction_logs (order_id, prediction)
+                    VALUES (:order_id, :prediction)
+                    """)
+                with engine.connect() as conn:
+                    conn.execute(
+                        query,
+                        {
+                            "order_id": order_ids[index],
+                            "prediction": doc["prediction"],
+                        },
+                    )
+                    conn.commit()
 
             logger.info(
                 "Prediction request: input=%s output=%s latency=%.3fs model_version=1",

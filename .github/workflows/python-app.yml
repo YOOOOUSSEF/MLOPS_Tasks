@@ -58,7 +58,7 @@ jobs:
     - name: Run integration tests
       working-directory: ./task_3
       env:
-        DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
+        DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@postgres-db:5432/olist-db
       run: pytest ./integration_tests
 
     - name: Tear down services (clean server always even if there are failures)
@@ -79,5 +79,5 @@ jobs:
       with:
         context: ./task_3
         push: true
-        tags: youssef375/olistai-is_late_app:latest
+        tags: youssef375/olistai-is_late_app:latest #if this is an actual image, then I will put another variable tag beside latest to preserve all images.
 
