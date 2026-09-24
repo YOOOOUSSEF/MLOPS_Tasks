@@ -1,4 +1,4 @@
-artifact_path: file:d:/MlOps_tasks/task_3/mlflow_tracker/mlartifacts/models/m-e66e32237c8b4e3aab1f47125803338f/artifacts
+artifact_path: file:///D:\MlOps_tasks\olist-db_classifier_with_fastAPI/mlflow_tracker/mlartifacts/models/m-b988b9aeae1c4c8e983006fa59e079e4/artifacts
 flavors:
   python_function:
     env:
@@ -18,11 +18,11 @@ flavors:
     - xgboost.sklearn.XGBClassifier
 is_signature_from_type_hint: false
 mlflow_version: 3.16.1
-model_id: m-e66e32237c8b4e3aab1f47125803338f
+model_id: m-b988b9aeae1c4c8e983006fa59e079e4
 model_size_bytes: 95040
-model_uuid: m-e66e32237c8b4e3aab1f47125803338f
+model_uuid: m-b988b9aeae1c4c8e983006fa59e079e4
 prompts: null
-run_id: 7cbeece3d07f4174be1ecc7c5287968d
+run_id: c41735a4e63842958584325482afb730
 saved_input_example_info:
   artifact_path: input_example.json
   pandas_orient: split
@@ -123,4 +123,4 @@ signature:
   outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
   params: null
 type_hint_from_example: false
-utc_time_created: '2026-09-20 18:49:46.628049'
+utc_time_created: '2026-09-20 18:33:05.624036'

@@ -28,7 +28,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 black pytest
-        if [ -f task_3/requirements/runtime.txt ]; then pip install -r task_3/requirements/runtime.txt; fi
+        if [ -f olist-db_classifier_with_fastAPI/requirements/runtime.txt ]; then pip install -r olist-db_classifier_with_fastAPI/requirements/runtime.txt; fi
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -41,14 +41,14 @@ jobs:
         black . --check --diff --color
 
     - name: unit tests
-      working-directory: ./task_3
+      working-directory: ./olist-db_classifier_with_fastAPI
       run: pytest ./unit_tests
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
     - name: Start services (download db then run db and ) with docker-compose (CI)
-      working-directory: ./task_3
+      working-directory: ./olist-db_classifier_with_fastAPI
       env:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml up -d --build
@@ -56,14 +56,14 @@ jobs:
 
 
     - name: Run integration tests
-      working-directory: ./task_3
+      working-directory: ./olist-db_classifier_with_fastAPI
       env:
         DB_CONNECTION_STRING: postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/olist-db
       run: pytest ./integration_tests
 
     - name: Tear down services (clean server always even if there are failures)
       if: always()
-      working-directory: ./task_3
+      working-directory: ./olist-db_classifier_with_fastAPI
       run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml down -v
 
 
@@ -77,7 +77,7 @@ jobs:
     - name: Build and Push image to my private docker repo
       uses: docker/build-push-action@v6
       with:
-        context: ./task_3
+        context: ./olist-db_classifier_with_fastAPI
         push: true
         tags: youssef375/olistai-is_late_app:latest #if this is an actual image, then I will put another variable tag beside latest to preserve all images.
 
