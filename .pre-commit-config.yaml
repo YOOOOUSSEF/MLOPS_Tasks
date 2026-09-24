@@ -3,9 +3,9 @@ repos:
     rev: v4.6.0
     hooks:
       - id: check-yaml
-        exclude: ^task_3/docker-compose\.ci\.yaml$
+        exclude: ^olist-db_classifier_with_fastAPI/docker-compose\.ci\.yaml$
       - id: check-added-large-files
-        exclude: ^(task_3/db/seed\.sql|task_3/ref_data/ML_TABLE_LABELED\.csv)$
+        exclude: ^(olist-db_classifier_with_fastAPI/db/seed\.sql|olist-db_classifier_with_fastAPI/ref_data/ML_TABLE_LABELED\.csv)$
 
   - repo: local
     hooks:

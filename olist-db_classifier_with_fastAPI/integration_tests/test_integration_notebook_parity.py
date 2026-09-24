@@ -20,7 +20,7 @@ def test_notebook_parity():
     PROJ = get_project_root()
     p = yaml.safe_load(open(PROJ / "config" / "params.yaml"))
 
-    # os.chdir("tests")# you are now on d:/MlOps_tasks/task_3/tests so paths can work.
+    # os.chdir("tests")# you are now on d:/MlOps_tasks/olist-db_classifier_with_fastAPI/tests so paths can work.
 
     pipeline = InferencePipeline(
         model_path=p["paths"]["mlflow_model_uri"],

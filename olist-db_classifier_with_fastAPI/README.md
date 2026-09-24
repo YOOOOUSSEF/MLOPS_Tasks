@@ -5,7 +5,7 @@ This service loads the trained Olist late-delivery model and exposes predictions
 ## Project structure
 
 ```text
-task_3/
+olist-db_classifier_with_fastAPI/
 ├── app/main.py                 # FastAPI application and monitoring endpoints
 ├── src/                        # Inference, feature, data-access, and validation code
 ├── config/params.yaml          # Model, data, and report paths
@@ -22,7 +22,7 @@ task_3/
 
 ## Run with Docker
 
-From `task_3/`, set `POSTGRES_PASSWORD` in your environment, then run:
+From `olist-db_classifier_with_fastAPI/`, set `POSTGRES_PASSWORD` in your environment, then run:
 
 ```powershell
 docker compose up --build

@@ -1,28 +1,26 @@
-artifact_path: file:///D:\MlOps_tasks\task_3/mlflow_tracker/mlartifacts/models/m-b988b9aeae1c4c8e983006fa59e079e4/artifacts
+artifact_path: file:d:/MlOps_tasks/olist-db_classifier_with_fastAPI/mlflow_tracker/mlartifacts/models/m-017325e2fc4d4f7585207da482d06fcf/artifacts
 flavors:
   python_function:
     env:
       conda: conda.yaml
       virtualenv: python_env.yaml
     loader_module: mlflow.sklearn
-    model_path: model.skops
+    model_path: model.pkl
     predict_fn: predict
     python_version: 3.14.7
   sklearn:
     code: null
-    pickled_model: model.skops
-    serialization_format: skops
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
     sklearn_version: 1.9.0
-    skops_trusted_types:
-    - xgboost.core.Booster
-    - xgboost.sklearn.XGBClassifier
+    skops_trusted_types: null
 is_signature_from_type_hint: false
 mlflow_version: 3.16.1
-model_id: m-b988b9aeae1c4c8e983006fa59e079e4
-model_size_bytes: 95040
-model_uuid: m-b988b9aeae1c4c8e983006fa59e079e4
+model_id: m-017325e2fc4d4f7585207da482d06fcf
+model_size_bytes: 66660
+model_uuid: m-017325e2fc4d4f7585207da482d06fcf
 prompts: null
-run_id: c41735a4e63842958584325482afb730
+run_id: 64275f6d31bd4f0a9db68e12af8bc802
 saved_input_example_info:
   artifact_path: input_example.json
   pandas_orient: split
@@ -123,4 +121,4 @@ signature:
   outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
   params: null
 type_hint_from_example: false
-utc_time_created: '2026-09-20 18:33:05.624036'
+utc_time_created: '2026-09-20 19:35:43.063763'
